@@ -17,6 +17,7 @@ public class DishWasherTest {
     private Engine engine;
     private RunResult runResult;
     private WaterPump waterPump;
+    private ProgramConfiguration programConfiguration;
 
     @Before
     public void setUp() {
@@ -24,13 +25,12 @@ public class DishWasherTest {
         door = mock(Door.class);
         engine = mock(Engine.class);
         waterPump = mock(WaterPump.class);
+        programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
+        runResult = RunResult.builder().withRunMinutes(30).withStatus(Status.SUCCESS).build();
     }
 
     @Test
     public void shouldReturnTrueIfStatusIsErrorFilter() {
-        //RunResult runResult = RunResult.builder().withRunMinutes(30).withStatus(Status.ERROR_FILTER).build();
-        ProgramConfiguration programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
-
         DishWasher dishWasher = new DishWasher(waterPump, engine, dirtFilter, door);
         dishWasher.start(programConfiguration);
         Assert.assertThat(dishWasher.start(programConfiguration).getStatus(), is(Status.ERROR_FILTER));
@@ -39,8 +39,6 @@ public class DishWasherTest {
 
     @Test
     public void shouldReturnTrueIfPourInvokesOnce() throws PumpException {
-        ProgramConfiguration programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
-
         DishWasher dishWasher = new DishWasher(waterPump, engine, dirtFilter, door);
         dishWasher.start(programConfiguration);
 
@@ -48,6 +46,18 @@ public class DishWasherTest {
         verify(waterPump, times(1)).pour(washingProgram);
     }
 
+
+    @Test
+    public void shouldReturnTrueIfEngineRunProgramInvokesOnce() {
+        ProgramConfiguration programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
+
+
+        DishWasher dishWasher = new DishWasher(waterPump, engine, dirtFilter, door);
+        dishWasher.start(programConfiguration);
+
+        WashingProgram washingProgram = new WashingProgram(32);
+        verify(engine, times(1)).runProgram(washingProgram);
+    }
 
 
 

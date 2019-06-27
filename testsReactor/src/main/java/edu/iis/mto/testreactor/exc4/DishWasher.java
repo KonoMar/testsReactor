@@ -44,7 +44,8 @@ public class DishWasher {
                 runProgram(program);
             }
             runProgram(WashingProgram.RINSE);
-        } catch (EngineException e) {
+        } catch (
+                EngineException e) {
             return error(Status.ERROR_PROGRAM);
         } catch (PumpException e) {
             return error(Status.ERROR_PUMP);
