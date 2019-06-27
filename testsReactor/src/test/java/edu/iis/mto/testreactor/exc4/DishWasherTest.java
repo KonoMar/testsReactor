@@ -27,7 +27,7 @@ public class DishWasherTest {
     }
 
     @Test
-    public void shouldReturnTrueIfStatusIsErrorFilter(){
+    public void shouldReturnTrueIfStatusIsErrorFilter() {
         //RunResult runResult = RunResult.builder().withRunMinutes(30).withStatus(Status.ERROR_FILTER).build();
         ProgramConfiguration programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
 
@@ -35,4 +35,20 @@ public class DishWasherTest {
         dishWasher.start(programConfiguration);
         Assert.assertThat(dishWasher.start(programConfiguration).getStatus(), is(Status.ERROR_FILTER));
     }
+
+
+    @Test
+    public void shouldReturnTrueIfPourInvokesOnce() throws PumpException {
+        ProgramConfiguration programConfiguration = ProgramConfiguration.builder().withProgram(WashingProgram.ECO).withTabletsUsed(true).build();
+
+        DishWasher dishWasher = new DishWasher(waterPump, engine, dirtFilter, door);
+        dishWasher.start(programConfiguration);
+
+        WashingProgram washingProgram = new WashingProgram(120);
+        verify(waterPump, times(1)).pour(washingProgram);
+    }
+
+
+
+
 }
